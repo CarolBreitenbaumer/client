@@ -1,0 +1,16 @@
+
+
+
+<form class="ui large form" [formGroup]="messageForm"
+      (ngSubmit)="submitForm()">
+  <input type="hidden" formControlName="id">
+  <div class="field">
+    Nachricht senden:
+    <textarea formControlName="comment" id="comment" name="comment" rows="4" cols="50"
+              placeholder="Sie können gerne einen Termin vorschlagen. Bitte geben Sie eine Uhrzeit und ein Datum an."></textarea>
+    <div *ngIf="errors['comment']" class="ui negative message"> {{
+      errors['comment'] }} </div>
+  </div>
+  <button type="submit" class="ui grey button"
+          [disabled]="messageForm.invalid">Senden</button>
+</form>

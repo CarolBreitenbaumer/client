@@ -1,0 +1,13 @@
+<style>  a { text-decoration: none !important}</style>
+
+<div class="content">
+  <div class="ui middle aligned selection divided list container">
+    <a *ngIf=" subject " >
+      <div class="content">
+        <p class="header">{{ subject.name }} - {{subject.tutor?.lastname}} {{subject.tutor?.firstname}}</p>
+        <p class="description"><u>Beschreibung:</u> {{ subject.description }} </p>
+
+      </div>
+    </a>
+  </div>
+</div>

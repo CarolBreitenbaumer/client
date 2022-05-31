@@ -1,0 +1,116 @@
+<div *ngIf="!this.authService.isLoggedIn()" class="container text-center">
+  <h1>Detailseite</h1>
+  <p class="text">Loggen Sie sich bitte ein, um die Detailseite zu sehen.</p>
+  <button [routerLink]="'/subjects'" class="ui grey button">Zurück zur
+    Fächerliste</button>
+</div>
+
+
+
+<div *ngIf="this.authService.isLoggedIn()" class="container">
+
+
+  <div class="ui grid" *ngIf="subject">
+    <div class="twelve wide column">
+      <h1 class="ui header">{{ subject.name }}</h1>
+    </div>
+    <div class="sixteen wide column">
+      <h2 class="ui header">Beschreibung</h2>
+      {{ subject.description }}
+    </div>
+
+
+
+    <h3 class="ui header">Termine</h3>
+    <table *ngIf="freeAppointments.length > 0" class="table table-dark container">
+      <thead>
+      <tr>
+        <th scope="col">Datum</th>
+        <th scope="col">Uhrzeit</th>
+        <th scope="col">Dauer</th>
+        <th scope="col">Ort</th>
+        <th *ngIf="authService.IsLoggedAndNoAdmin()">Termin buchen
+        </th>
+        <th *ngIf="authService.IsLoggedAndAdmin()">Vorname
+        </th>
+        <th *ngIf="authService.IsLoggedAndAdmin()">Nachname
+        </th>
+        <th *ngIf="authService.IsLoggedAndAdmin()">Status
+        </th>
+        <th *ngIf="authService.IsLoggedAndAdmin()">Aktionen
+        </th>
+
+      </tr >
+      </thead>
+      <tbody>
+      <tr *ngFor="let appointment of this.freeAppointments">
+        <td>{{ appointment.date | date: 'longDate'}}</td>
+        <td>{{ appointment.time}}</td>
+        <td>{{ appointment.duration }}</td>
+        <td>{{ appointment.place }}</td>
+        <td *ngIf="authService.IsLoggedAndNoAdmin()">
+          <button class="ui grey tiny button labeled icon button" (click)="registerAppointment(appointment.id)">
+            <i class="check icon"></i>  Termin buchen
+          </button>
+        </td>
+        <td *ngIf="authService.IsLoggedAndAdmin()">
+          {{ appointment.student?.firstname}}
+        </td>
+        <td *ngIf="authService.IsLoggedAndAdmin()">
+          {{ appointment.student?.lastname}}
+        </td>
+        <td *ngIf="authService.IsLoggedAndAdmin()">
+                  <span *ngIf="appointment.attend && appointment.student != null">
+                    Teilgenommen
+                  </span>
+                  <span *ngIf="!appointment.attend && appointment.student == null ">
+
+                  </span>
+          <span *ngIf="!appointment.attend && appointment.student != null">
+                    Nicht teilgenommen
+                  </span>
+        </td>
+        <td *ngIf="authService.IsLoggedAndAdmin()">
+          <span *ngIf="!appointment.attend && appointment.student != null">
+             <button class="ui grey button" (click)="setBooking(appointment.id)" *ngIf="setButtonToAttend(appointment.date, appointment.time)">Als teilgenommen erfassen</button>
+          </span>
+
+        </td>
+
+
+      </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="freeAppointments.length == 0">
+      <p>Es gibt gerade keinen Termin.</p>
+    </div>
+
+
+
+    <a class="ui grey button mb-5 mt-5" data-sm-link-text="Zurück zu den Fächern" [routerLink]="'/subjects'"><span>Zurück zur Liste</span></a>
+
+
+
+    <div *ngIf="subject.appointments.length <= 0 && authService.IsLoggedAndAdmin()">
+      <button *ngIf="authService.isLoggedIn()" class="ui tiny grey labeled icon button mb-5 mt-5" (click)="removeSubject()">
+        <i class="remove icon"></i>Fach löschen
+      </button>
+    </div>
+
+
+    <a *ngIf="authService.IsLoggedAndAdmin()" class="ui grey labeled icon button mb-5 mt-5"
+       [routerLink]="['../../admin', subject.id]">
+      <i class="write icon"></i> Fach bearbeiten
+    </a>
+
+    <div *ngIf="authService.IsLoggedAndNoAdmin()" class="row-cols-6" >
+    <h1>Message Form</h1>
+    <bs-message-form [subject]="subject" *ngIf="subject.id!=0"></bs-message-form>
+    </div>
+
+
+
+
+  </div>
+</div>

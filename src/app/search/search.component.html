@@ -1,0 +1,13 @@
+<div class="ui search"  [ngClass]="{ loading: isLoading }">
+  <div class="ui icon input">
+    <input (keyup)="keyup.emit(searchTerm.value)" #searchTerm class="prompt" type="text" placeholder="Suche...">
+    <i class="search icon"></i>
+  </div>
+  <div class="results transition" [ngClass]="{ visible: foundSubjects.length }">
+    <a href (click)="subjectSelected.emit(subject); false" class="result" *ngFor="let subject of foundSubjects">
+      <div class="content">
+        <div class="title" >{{ subject.name }}</div>
+      </div>
+    </a>
+  </div>
+</div>

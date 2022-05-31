@@ -1,0 +1,95 @@
+<style>
+  details > summary {
+    list-style: none;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  summary {
+    background-color: #FF4500;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+  }
+  summary:hover{
+    background-color: #FF7F50;
+  }
+  details {
+    width: 50%;
+    margin: auto;
+  }
+</style>
+
+
+<h1 class="container text-center">Formular für Fächer und Termine</h1>
+<details open>
+  <summary class="success">Info</summary>
+  <p>Mit diesem Formular können Sie Fächer inkl. Termine angeben. Wenn Sie bereits ein Fach erstellt haben können Sie die Termine erweitern. Klicken sie dazu in der Listenansicht auf das gewünschte Fach.</p>
+</details>
+
+<form class="ui large form container" [formGroup]="subjectForm"
+      (ngSubmit)="submitForm()" >
+  <input type="hidden" formControlName="id">
+  <div class="field">
+    <label>Name</label>
+    <input formControlName="name">
+    <div *ngIf="errors['name']" class="ui negative message"> {{
+      errors['name'] }} </div>
+    <label>Beschreibung</label>
+    <input formControlName="description">
+    <div *ngIf="errors['description']" class="ui negative message"> {{
+      errors['description'] }} </div>
+  </div>
+  <div class="field">
+    <label>Appointments</label>
+    <div formArrayName="appointments">
+      <div class="fields" *ngFor="let control of appointments?.controls; index as i; last as l" [formGroupName]="i">
+        <input type="hidden" formControlName="id">
+        <div class="nine wide field">
+          <div class="field">
+            <label>Datum (muss in Zukunft liegen)</label>
+            <input type="date" formControlName="date">
+            <div *ngIf="errors['date']" class="ui negative message"> {{ errors['date'] }} </div>
+            <span class="ui negative message" [hidden]="!subjectForm.hasError('notInFuture')">
+            Das Datum muss in der Zukunft liegen
+            </span>
+          </div>
+
+
+        </div>
+        <div class="six wide field">
+          <label>Uhrzeit (in voller Stunde angeben z. B. 17:00)</label>
+          <input formControlName="time">
+        </div>
+        <div *ngIf="errors['time']" class="ui negative message"> {{
+          errors['time'] }} </div>
+        <div  class="six wide field">
+        <label>Dauer:</label>
+        <input type="text" value="1 Stunde" readonly><br><br>
+      </div>
+        <div *ngIf="errors['dauer']" class="ui negative message"> {{
+          errors['dauer'] }} </div>
+        <div class="nine wide field">
+          <label>Ort</label>
+          <input formControlName="place" placeholder="online, MS Teams oder Straße + Ort">
+        </div>
+        <div *ngIf="errors['place']" class="ui negative message"> {{
+          errors['place'] }} </div>
+
+
+     </div>
+    <div *ngIf="errors['appointments']" class="ui negative message">{{
+      errors['appointments'] }}</div>
+  </div>
+    <div class="one wide field">
+      <button (click)="addThumbnailControl()" class="ui large button"
+              type="button">+</button>
+    </div>
+
+
+
+
+  <button type="submit" class="ui button"
+          [disabled]="subjectForm.invalid">Speichern</button>
+  </div>
+</form>

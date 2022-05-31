@@ -1,0 +1,7 @@
+<div class="ui {{this.authService.isLoggedIn() ? 'four':'three'}} item tabs menu">
+  <a routerLink="home" routerLinkActive="active" class="item">Home</a>
+  <a routerLink="subjects" routerLinkActive="active" class="item">Fächerauswahl</a>
+  <a *ngIf="this.authService.IsLoggedAndAdmin()" routerLink="admin" routerLinkActive="active" class="item "> <i class="fa fa-user " ></i>&nbsp;Neues Fach anlegen</a>
+  <a routerLink="login" routerLinkActive="active" class="item">{{getLoginLabel()}}</a>
+</div>
+<router-outlet></router-outlet>

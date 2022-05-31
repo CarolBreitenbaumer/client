@@ -1,0 +1,152 @@
+<style>
+  a.item.bs-subject-list-item {
+    text-decoration: none;
+  }
+  .table tr:not(first-child):hover{
+    background-color: white;
+    color: black;
+    cursor: pointer;
+  }
+</style>
+
+  <div *ngIf="authService.IsLoggedAndAdmin()" class="container">
+
+    <a [routerLink]="'../admin'" class="ui grey button">neues Fach anlegen</a>
+
+  </div>
+
+
+
+  <h1 class="text-center">Liste aller Fächer</h1>
+
+<div class="container">
+  <div *ngIf="authService.IsLoggedAndAdmin()" class="container">
+
+
+
+    <h2>Nachrichten</h2>
+    <div *ngIf="message.length > 0">
+  <div *ngFor="let m of message">
+    <li> <a (click)="setMessageReaded(m.id)" [routerLink]="m.subject?.name">{{ m.message }}</a></li>
+  </div>
+    </div>
+    <div *ngIf="message.length == 0">
+      <p>Sie haben keine Nachrichten.</p>
+    </div>
+
+  <h2>Gebuchte Termine</h2>
+
+    <table *ngIf="appointmentFuture.length > 0" class="table table-dark container" >
+      <thead>
+      <tr>
+        <th scope="col">Datum</th>
+        <th scope="col">Uhrzeit</th>
+        <th scope="col">Dauer</th>
+        <th scope="col">Ort</th>
+      </tr >
+      </thead>
+      <tbody>
+      <tr *ngFor="let app of appointmentFuture" [routerLink]="app.subject.name">
+        <td>{{ app.date | date: 'longDate'}}</td>
+        <td>{{ app.time}} Uhr</td>
+        <td>{{ app.duration }}</td>
+        <td>{{ app.place }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div *ngIf="appointmentFuture.length == 0">
+      <p>Es hat sich niemand für einen Termin angemeldet.</p>
+    </div>
+    <div>
+    </div>
+
+
+    <h2>Vergangene Termine</h2>
+    <table *ngIf="appointmentPast.length > 0" class="table table-dark container">
+      <thead>
+      <tr>
+        <th scope="col">Datum</th>
+        <th scope="col">Uhrzeit</th>
+        <th scope="col">Dauer</th>
+        <th scope="col">Ort</th>
+      </tr >
+      </thead>
+      <tbody>
+      <tr *ngFor="let app of appointmentPast" [routerLink]="app.subject.name">
+        <td>{{ app.date | date: 'longDate'}}</td>
+        <td>{{ app.time}} Uhr</td>
+        <td>{{ app.duration }}</td>
+        <td>{{ app.place }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div *ngIf="appointmentPast.length == 0">
+      <p>Sie haben keine vergangenen Termine.</p>
+    </div>
+  </div>
+
+  <div *ngIf="authService.IsLoggedAndNoAdmin()" class="container">
+
+
+    <h2>Gebuchte Termine</h2>
+
+
+    <table class="table table-dark container" *ngIf="appointmentFutureForStudent.length > 0">
+      <thead>
+        <th scope="col">Datum</th>
+        <th scope="col">Uhrzeit</th>
+        <th scope="col">Dauer</th>
+        <th scope="col">Ort</th>
+      </thead>
+      <tbody >
+      <tr *ngFor="let app of appointmentFutureForStudent" [routerLink]="app.subject.name">
+        <td>{{ app.date | date: 'longDate'}}</td>
+        <td>{{ app.time}} Uhr</td>
+        <td>{{ app.duration }}</td>
+        <td>{{ app.place }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div *ngIf="appointmentFutureForStudent.length == 0">
+      <p>Sie haben sich für keinen Termin angemeldet.</p>
+    </div>
+
+    <h2>Vergangene Termine</h2>
+    <table class="table table-dark container" *ngIf="appointmentPastForStudent.length > 0">
+      <thead>
+      <th scope="col">Datum</th>
+      <th scope="col">Uhrzeit</th>
+      <th scope="col">Dauer</th>
+      <th scope="col">Ort</th>
+      </thead>
+      <tbody >
+      <tr *ngFor="let app of appointmentPastForStudent" [routerLink]="app.subject.name">
+        <td>{{ app.date | date: 'longDate'}}</td>
+        <td>{{ app.time}} Uhr</td>
+        <td>{{ app.duration }}</td>
+        <td>{{ app.place }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div *ngIf="appointmentPastForStudent.length == 0">
+      <p>Sie haben keine vergangenen Termine.</p>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="ui middle aligned selection divided list">
+  <a *ngFor="let subject of subjects" class="item bs-subject-list-item"
+    [subject]="subject"
+    [routerLink]="subject.name"></a>
+    <div *ngIf="!subjects" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <p *ngIf="subjects && !subjects.length">Es wurden noch keine Fächer
+      eingetragen.</p>
+  </div>
+</div>
+
+
