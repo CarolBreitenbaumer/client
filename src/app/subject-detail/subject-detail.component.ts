@@ -29,7 +29,7 @@ export class SubjectDetailComponent implements OnInit {
       const params = this.route.snapshot.params;
       this.bs.getSingleByName(params['name'])
         //holen Fach und dann die Appointments
-        .subscribe((b) => { this.subject = b; this.getfreeAppointments(); console.log(this.freeAppointments)});
+        .subscribe((b) => { this.subject = b; this.getfreeAppointments(); console.log("Appointments",this.freeAppointments)});
 
   }
 

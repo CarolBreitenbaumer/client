@@ -20,6 +20,7 @@ export class SubjectFormComponent implements OnInit {
   subject = SubjectFactory.empty();
   errors: { [key: string]: string } = {};
   isUpdatingSubject = false;
+  oldAppointments: Appointment[] = [];
   appointments: FormArray;
 
   constructor(
@@ -43,7 +44,7 @@ export class SubjectFormComponent implements OnInit {
         this.initSubject();
       })
     }
-    this.initSubject();
+    //this.initSubject();
 
   }
 
@@ -78,9 +79,11 @@ export class SubjectFormComponent implements OnInit {
 
   pushFormArrayForAppointment(id: number, date: Date, time: string, place: string, attend:boolean, student_id:number ){
     console.log ("Student ID:" + student_id);
-    let oldAppointments = this.appointments;
-    if(student_id == null){
-      console.log(id);
+
+    if(student_id != null){
+      this.oldAppointments.push();
+      return;
+    }
     let fg = this.fb.group({
       id: new FormControl(id),
       date: new FormControl(formatDate(date, 'yyyy-MM-dd', 'en'), [Validators.required]),
@@ -90,10 +93,6 @@ export class SubjectFormComponent implements OnInit {
       place: new FormControl(place, [Validators.required])
     }, {validator: this.checkForDateInPast});
     this.appointments.push(fg);
-    if(student_id == null){
-      this.appointments.push(oldAppointments);
-    }
-    }
   }
 
   // für die Appointements die der Benutzer erstellt
@@ -120,8 +119,9 @@ export class SubjectFormComponent implements OnInit {
     this.subjectForm.value.appointments = this.subjectForm.value.appointments.filter(
       (thumbnail: { name: string; }) => thumbnail.name
     );
-    const subject: Subject = SubjectFactory.fromObject(this.subjectForm.value, this.subjectForm.controls['appointments'].value);
+    const subject: Subject = SubjectFactory.fromObject(this.subjectForm.value, this.subjectForm.controls['appointments'].value, this.oldAppointments);
 
+    console.log(subject);
     if(subject.appointments.length == 0){
       alert("Bitte geben sie mindestens einen Termin an.");
       return;
