@@ -58,11 +58,6 @@ export class SubjectStoreService {
   }
 
   // --------Apointments ------------
-  index(id: number): Observable<Appointment> {
-    return this.http.get<Appointment>(`${this.api}/appointments/${id}`)
-      .pipe(retry(3)).pipe(catchError(this.errorHandler))
-  }
-
   registerUserAppointment(appointment_id: number, student_id: number): Observable<any>{
     return this.http.post(`${this.api}/user/registerAppointment/${appointment_id}/${student_id}`,{})
       .pipe(retry(3)).pipe(catchError(this.errorHandler));

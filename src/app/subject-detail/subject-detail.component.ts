@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from "../shared/authentication.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Appointment, Subject} from "../shared/subject";
@@ -11,25 +11,29 @@ import {formatDate} from "@angular/common";
 @Component({
   selector: 'bs-subject-detail',
   templateUrl: './subject-detail.component.html',
-  styles: [
-  ]
+  styles: []
 })
 export class SubjectDetailComponent implements OnInit {
 
-  subject: Subject =SubjectFactory.empty();
+  subject: Subject = SubjectFactory.empty();
   freeAppointments: Appointment[] = [];
 
   constructor(public authService: AuthenticationService,
               private bs: SubjectStoreService,
               private router: Router,
               private route: ActivatedRoute,
-              private toastr: ToastrService) { }
+              private toastr: ToastrService) {
+  }
 
   ngOnInit(): void {
-      const params = this.route.snapshot.params;
-      this.bs.getSingleByName(params['name'])
-        //holen Fach und dann die Appointments
-        .subscribe((b) => { this.subject = b; this.getfreeAppointments(); console.log("Appointments",this.freeAppointments)});
+    const params = this.route.snapshot.params;
+    this.bs.getSingleByName(params['name'])
+      //holen Fach und dann die Appointments
+      .subscribe((b) => {
+        this.subject = b;
+        this.getfreeAppointments();
+        console.log("Appointments", this.freeAppointments)
+      });
 
   }
 
@@ -38,14 +42,14 @@ export class SubjectDetailComponent implements OnInit {
     if (confirm('Möchtest du das Fach wirklich löschen?')) {
       this.bs.remove(this.subject.id)
         .subscribe(res => this.router.navigate(['../'], {
-            relativeTo:this.route
+            relativeTo: this.route
 
           }
         ));
     }
   }
 
-  setBooking(appointment_id: number){
+  setBooking(appointment_id: number) {
     this.bs.setBooking(appointment_id).subscribe(b => {
       window.location.reload();
     });
@@ -59,34 +63,37 @@ export class SubjectDetailComponent implements OnInit {
 
     const time = new Date(formatDate(new Date(), 'yyyy-MM-dd', 'en'));
 
-    if(date.toISOString() < time.toISOString()){
+    if (date.toISOString() < time.toISOString()) {
       return false;
     }
 
     time.setHours(time.getHours() + 24);
 
-    if(date.toISOString() <= time.toISOString()) {
+    if (date.toISOString() <= time.toISOString()) {
       return true;
     }
 
     return false;
   }
 
-  registerAppointment(appointment_id: number):void{
-    this.bs.registerUserAppointment(appointment_id, this.authService.getCurrentUserId()).subscribe(b=>{
-      alert("Erfolgreich durchgeführt.");
-      this.ngOnInit();
-    },()=>{
-      alert("Konnte nicht durchgeführt werden.");
+  registerAppointment(appointment_id: number): void {
+    this.bs.registerUserAppointment(appointment_id, this.authService.getCurrentUserId()).subscribe({
+      next: b => {
+        //alert("Erfolgreich durchgeführt.");
+        alert(b);
+        this.ngOnInit();
+      }, error: err => {
+        alert("Konnte nicht durchgeführt werden.");
+      }
     });
   }
 
-  getfreeAppointments(): void{
-    if(this.authService.IsLoggedAndAdmin()){
+  getfreeAppointments(): void {
+    if (this.authService.IsLoggedAndAdmin()) {
       this.freeAppointments = this.subject.appointments;
-    }else{
+    } else {
       console.log(this.subject.appointments);
-    this.freeAppointments = this.subject.appointments.filter(item => item.student_id == null);
+      this.freeAppointments = this.subject.appointments.filter(item => item.student_id == null);
     }
   }
 

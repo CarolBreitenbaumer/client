@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {SubjectFactory} from "../shared/subject-factory";
 import {SubjectStoreService} from "../shared/subject-store.service";
@@ -11,8 +11,7 @@ import {formatDate} from "@angular/common";
 @Component({
   selector: 'bs-subject-form',
   templateUrl: './subject-form.component.html',
-  styles: [
-  ]
+  styles: []
 })
 export class SubjectFormComponent implements OnInit {
 
@@ -20,7 +19,7 @@ export class SubjectFormComponent implements OnInit {
   subject = SubjectFactory.empty();
   errors: { [key: string]: string } = {};
   isUpdatingSubject = false;
-  oldAppointments: Appointment[] = [];
+  oldAppointments: FormArray;
   appointments: FormArray;
 
   constructor(
@@ -31,6 +30,7 @@ export class SubjectFormComponent implements OnInit {
   ) {
     this.subjectForm = this.fb.group({});
     this.appointments = this.fb.array([]);
+    this.oldAppointments = this.fb.array([]);
   }
 
   ngOnInit() {
@@ -44,7 +44,7 @@ export class SubjectFormComponent implements OnInit {
         this.initSubject();
       })
     }
-    //this.initSubject();
+    this.initSubject();
 
   }
 
@@ -53,7 +53,7 @@ export class SubjectFormComponent implements OnInit {
     //const id = this.route.snapshot.params["id"];
     this.subjectForm = this.fb.group({
       id: this.subject.id,
-      name: [this.subject.name, [Validators.required], this.isUpdatingSubject?null:SubjectValidators.nameExists(this.bs)],
+      name: [this.subject.name, [Validators.required], this.isUpdatingSubject ? null : SubjectValidators.nameExists(this.bs)],
       description: [this.subject.description, Validators.required],
       tutor_id: this.subject.tutor_id,
       appointments: this.appointments
@@ -70,20 +70,15 @@ export class SubjectFormComponent implements OnInit {
       this.appointments = this.fb.array([]);
       console.log(this.appointments);
       for (let app of this.subject.appointments) {
-      this.pushFormArrayForAppointment(app.id, app.date, app.time, app.place, app.attend, app.student_id);
+        this.pushFormArrayForAppointment(app.id, app.date, app.time, app.place, app.attend, app.student_id);
       }
     }
     console.log(this.subject.appointments);
 
   }
 
-  pushFormArrayForAppointment(id: number, date: Date, time: string, place: string, attend:boolean, student_id:number ){
-    console.log ("Student ID:" + student_id);
-
-    if(student_id != null){
-      this.oldAppointments.push();
-      return;
-    }
+  pushFormArrayForAppointment(id: number, date: Date, time: string, place: string, attend: boolean, student_id: number) {
+    console.log("Student ID:" + student_id);
     let fg = this.fb.group({
       id: new FormControl(id),
       date: new FormControl(formatDate(date, 'yyyy-MM-dd', 'en'), [Validators.required]),
@@ -92,22 +87,28 @@ export class SubjectFormComponent implements OnInit {
       attend: new FormControl(attend),
       place: new FormControl(place, [Validators.required])
     }, {validator: this.checkForDateInPast});
+
+    if (student_id != null && student_id > 0) {
+      this.oldAppointments.push(fg);
+      return;
+    }
+
     this.appointments.push(fg);
   }
 
   // für die Appointements die der Benutzer erstellt
   addThumbnailControl() {
-    this.pushFormArrayForAppointment(0, new Date(),"16:00","online, MS Teams", false, 0);
+    this.pushFormArrayForAppointment(0, new Date(), "16:00", "online, MS Teams", false, 0);
   }
 
-  checkForDateInPast(g: FormGroup){
-    if(g.controls['id'].value != 0) {
+  checkForDateInPast(g: FormGroup) {
+    if (g.controls['id'].value != 0) {
       return;
     }
     const today: Date = new Date();
 
     if (new Date(g.controls['date'].value).toISOString() < today.toISOString())
-      return { "InTheFuture": false };
+      return {"InTheFuture": false};
 
     return;
   }
@@ -122,7 +123,7 @@ export class SubjectFormComponent implements OnInit {
     const subject: Subject = SubjectFactory.fromObject(this.subjectForm.value, this.subjectForm.controls['appointments'].value, this.oldAppointments);
 
     console.log(subject);
-    if(subject.appointments.length == 0){
+    if (subject.appointments.length == 0) {
       alert("Bitte geben sie mindestens einen Termin an.");
       return;
     }
@@ -140,7 +141,7 @@ export class SubjectFormComponent implements OnInit {
       this.bs.create(subject).subscribe(res => {
         this.subject = SubjectFactory.empty();
         this.subjectForm.reset(SubjectFactory.empty());
-        this.router.navigate(["../subjects"], { relativeTo: this.route });
+        this.router.navigate(["../subjects"], {relativeTo: this.route});
       });
     }
   }
@@ -150,7 +151,7 @@ export class SubjectFormComponent implements OnInit {
     console.log(this.subjectForm);
     this.errors = {};
     for (const message of SubjectFormErrorMessages) {
-      const control = this.subjectForm.controls['appointments'].get(message.forControl);
+      const control = this.subjectForm.get(message.forControl);
       if (
         control &&
         control.dirty &&

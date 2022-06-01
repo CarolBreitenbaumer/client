@@ -18,12 +18,12 @@ static fromObject(rawSubject: any, rawAppointments: any, rawAppointmentsOld: any
     rawSubject.description,
     rawSubject.name,
     rawSubject.tutor_id,
-    this.mearchAppointmentArrays(rawAppointments, rawAppointmentsOld)
+    this.mearchAppointmentArrays(rawAppointments, rawAppointmentsOld.value)
   );
 }
 
 static mearchAppointmentArrays(rawSubject: any, rawAppointments: any): Appointment[]{
-  console.log("MERCH !", rawSubject, rawAppointments)
+  //console.log("MERCH !", rawSubject, rawAppointments)
   const add: Appointment [] = [];
   rawSubject.forEach((value:Appointment)=>{
     add.push(value);

@@ -9,8 +9,27 @@
 
 <div *ngIf="this.authService.isLoggedIn()" class="container">
 
+  <div *ngIf="this.authService.IsLoggedAndNoAdmin()">
+    <div class="row mb-4">
+      <div class="col-sm-3">
+        <img [src]="subject.tutor?.image" class="w-100">
+      </div>
+      <div class="col-sm-3">
+        <h2>{{subject.tutor?.firstname}} {{subject.tutor?.lastname}}</h2>
+      </div>
+      <div class="col-sm-3">
+        <b>Beschreibung:</b> {{subject.tutor?.description}}
+      </div>
+      <div class="col-sm-3">
+        <b>Ausbildung: </b> {{subject.tutor?.education}}<br>
+        <b>Telefonnummer: </b>{{subject.tutor?.tnumber}}<br>
+        <b>Preis pro Stunde: </b> {{subject.tutor?.pricePerHour}} € <br>
+        <b>Preis für 10 Stunden: </b> {{subject.tutor?.priceForTenHours}} € <br>
+      </div>
+    </div>
+  </div>
 
-  <div class="ui grid" *ngIf="subject">
+  <div class="ui grid mt-5" *ngIf="subject">
     <div class="twelve wide column">
       <h1 class="ui header">{{ subject.name }}</h1>
     </div>
